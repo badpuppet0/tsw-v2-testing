@@ -1,0 +1,8 @@
+{
+  "name": "TSW v2 TESTING",
+  "description": "TSW v2 testing server",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection validation probe
+    match /test/connection {
+      allow read, write: if true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 256;
+    }
+
+    function isValidProfile(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() <= 100;
+    }
+
+    function isValidFriend(data) {
+      return data.userId is string && data.friendId is string &&
+             data.status in ['pending', 'accepted', 'declined'];
+    }
+
+    function isValidMessage(data) {
+      return data.senderId is string && data.receiverId is string &&
+             data.content is string && data.content.size() <= 2000;
+    }
+
+    function isValidPublicMessage(data) {
+      return data.channel in ['chat-1', 'chat-2', 'announcements'] &&
+             data.userId is string &&
+             data.content is string && data.content.size() <= 2000;
+    }
+
+    // Backend / application documents
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /profiles/{profileId} {
+      allow read, write: if true;
+    }
+
+    match /friends/{friendId} {
+      allow read, write: if true;
+    }
+
+    match /messages/{messageId} {
+      allow read, write: if true;
+    }
+
+    match /publicMessages/{messageId} {
+      allow read, write: if true;
+    }
+  }
+}

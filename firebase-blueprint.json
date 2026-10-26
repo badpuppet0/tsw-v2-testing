@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account in TSW v2 TESTING ONLY",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique user or auth identifier" },
+        "username": { "type": "string", "description": "Display username" },
+        "email": { "type": "string", "description": "User email address" },
+        "passwordHash": { "type": "string", "description": "Hashed password for local credentials" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" }
+      },
+      "required": ["uid", "username", "email"]
+    },
+    "Profile": {
+      "title": "Profile",
+      "description": "Browser profile with custom theme, shortcuts, and preferences",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner user ID" },
+        "name": { "type": "string", "description": "Profile name", "maxLength": 60 },
+        "avatar": { "type": "string", "description": "Avatar icon name", "maxLength": 50 },
+        "themeColor": { "type": "string", "description": "Hex color code", "maxLength": 20 },
+        "bio": { "type": "string", "description": "Profile bio", "maxLength": 200 },
+        "shortcuts": { "type": "string", "description": "JSON string of shortcut links" },
+        "preferences": { "type": "string", "description": "JSON string of browser preferences" },
+        "isDefault": { "type": "boolean", "description": "Whether this is the default profile" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp of update" }
+      },
+      "required": ["userId", "name"]
+    },
+    "Friend": {
+      "title": "Friend",
+      "description": "Friendship or friend request relationship between users",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "User ID of requester" },
+        "friendId": { "type": "string", "description": "User ID of friend" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "declined"] },
+        "createdAt": { "type": "string", "description": "ISO timestamp of creation" }
+      },
+      "required": ["userId", "friendId", "status"]
+    },
+    "DirectMessage": {
+      "title": "DirectMessage",
+      "description": "Private direct message between two users",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string", "description": "User ID of message sender" },
+        "receiverId": { "type": "string", "description": "User ID of message receiver" },
+        "content": { "type": "string", "description": "Message text content", "maxLength": 2000 },
+        "isRead": { "type": "boolean", "description": "Whether the message has been read" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of message" }
+      },
+      "required": ["senderId", "receiverId", "content"]
+    },
+    "PublicMessage": {
+      "title": "PublicMessage",
+      "description": "Message in public community rooms (chat-1, chat-2, announcements)",
+      "type": "object",
+      "properties": {
+        "channel": { "type": "string", "enum": ["chat-1", "chat-2", "announcements"] },
+        "userId": { "type": "string", "description": "User ID of author" },
+        "username": { "type": "string", "description": "Author username" },
+        "avatar": { "type": "string", "description": "Author avatar icon" },
+        "content": { "type": "string", "description": "Message text content", "maxLength": 2000 },
+        "createdAt": { "type": "string", "description": "ISO timestamp of message" }
+      },
+      "required": ["channel", "userId", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user accounts"
+    },
+    "/profiles/{profileId}": {
+      "schema": "Profile",
+      "description": "Collection of user browser profiles"
+    },
+    "/friends/{friendId}": {
+      "schema": "Friend",
+      "description": "Collection of friendships and requests"
+    },
+    "/messages/{messageId}": {
+      "schema": "DirectMessage",
+      "description": "Collection of direct messages"
+    },
+    "/publicMessages/{messageId}": {
+      "schema": "PublicMessage",
+      "description": "Collection of public channel messages"
+    }
+  }
+}
